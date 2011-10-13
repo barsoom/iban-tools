@@ -48,3 +48,8 @@ Pretty print, canonicalize, and extract fields from an IBAN code
 
     iban.prettify
     => "RO49 AAAA 1B31 0075 9384 0000"
+
+Very basic BIC validation
+
+    IBANTools::BIC.valid?("UNCRIT2B912")
+    => true
