@@ -11,55 +11,55 @@ module IBANTools
         @rules = IBANRules.new({ "GB" => {"length" => 22, "bban_pattern" => /[A-Z]{4}.*/} })
       end
 
-      it "should validate IBAN code" do
+      it "validates IBAN code" do
         # Using example from http://en.wikipedia.org/wiki/IBAN#Calculating_and_validating_IBAN_checksums
-        IBAN.valid?( "GB82WEST12345698765432", @rules ).should be_true
+        IBAN.valid?( "GB82WEST12345698765432", @rules ).should eq true
       end
 
-      it "should reject IBAN code with invalid characters" do
+      it "rejects IBAN code with invalid characters" do
         IBAN.new("gb99 %BC").validation_errors(@rules).
           should include(:bad_chars)
       end
 
-      it "should reject IBAN code from unknown country" do
+      it "rejects IBAN code from unknown country" do
         # Norway is not present in @rules
         IBAN.new("NO9386011117947").validation_errors(@rules).
           should == [:unknown_country_code]
       end
 
-      it "should reject IBAN code that does not match the length for the respective country" do
+      it "rejects IBAN code that does not match the length for the respective country" do
         IBAN.new("GB88 WEST 1234 5698 7654 3").validation_errors(@rules).
           should == [:bad_length]
           # Length is 21, should be 22.
           # check digits are good though
       end
 
-      it "should reject IBAN code that does not match the pattern for the selected country" do
+      it "rejects IBAN code that does not match the pattern for the selected country" do
         IBAN.new("GB69 7654 1234 5698 7654 32").validation_errors(@rules).
           should == [:bad_format]
           # Length and check digits are good,
           # but country pattern calls for chars 4-7 to be letters.
       end
 
-      it "should reject IBAN code with invalid check digits" do
-        IBAN.valid?( "GB99 WEST 1234 5698 7654 32", @rules ).should be_false
+      it "rejects IBAN code with invalid check digits" do
+        IBAN.valid?( "GB99 WEST 1234 5698 7654 32", @rules ).should eq false
 
         IBAN.new("GB99 WEST 1234 5698 7654 32").validation_errors(@rules).
           should == [:bad_check_digits]
       end
     end
 
-    it "should numerify IBAN code" do
+    it "numerifies IBAN code" do
       IBAN.new("GB82 WEST 1234 5698 7654 32").numerify.
         should == "3214282912345698765432161182"
     end
 
-    it "should canonicalize IBAN code" do
+    it "canonicalizes IBAN code" do
       IBAN.new("  gb82 WeSt 1234 5698 7654 32").code.
         should == "GB82WEST12345698765432"
     end
 
-    it "should pretty-print IBAN code" do
+    it "pretty-prints IBAN code" do
       IBAN.new(" GB82W EST12 34 5698 765432  ").prettify.
         should == "GB82 WEST 1234 5698 7654 32"
 
@@ -67,21 +67,20 @@ module IBANTools
         should == "#<IBANTools::IBAN: GB82 WEST 1234 5698 7654 32>"
     end
 
-    it "should extract ISO country code" do
+    it "extracts ISO country code" do
       IBAN.new("NO9386011117947").country_code.should == "NO"
     end
 
-    it "should extract check digits" do
+    it "extracts check digits" do
       IBAN.new("NO6686011117947").check_digits.should == "66"
       # extract check digits even if they are invalid!
     end
 
-    it "should extract BBAN (Basic Bank Account Number)" do
+    it "extracts BBAN (Basic Bank Account Number)" do
       IBAN.new("NO9386011117947").bban.should == "86011117947"
     end
 
     describe "with default rules" do
-      
       # Rules are loaded from lib/iban-tools/rules.yml
       # Samples from http://www.tbg5-finance.org/?ibandocs.shtml/
 
@@ -141,7 +140,7 @@ module IBANTools
         "SM86U0322509800000000270100",
         "TN5914207207100707129648",
         "TR330006100519786457841326"
-      ].each do |iban_code| 
+      ].each do |iban_code|
          describe iban_code do
            it "should be valid" do
              IBAN.new(iban_code).validation_errors.should == []
@@ -149,13 +148,11 @@ module IBANTools
          end
       end
 
-      it "should fail known pattern violations" do
+      it "fails on known pattern violations" do
         # This IBAN has valid check digits
         # but should fail because of pattern violation
-        IBAN.valid?("RO7999991B31007593840000").should be_false
+        IBAN.valid?("RO7999991B31007593840000").should eq false
       end
-
     end
-
   end
 end
