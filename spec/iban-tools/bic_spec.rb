@@ -23,5 +23,10 @@ module IBANTools
     it "rejects BIC with invalid country code" do
       BIC.valid?("SWEDXXSS").should eq false
     end
+
+    # We had a bug
+    it "rejects valid BIC embedded in a longer string" do
+      BIC.valid?("before ESSESESS after").should eq false
+    end
   end
 end
