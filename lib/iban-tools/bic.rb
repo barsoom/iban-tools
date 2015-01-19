@@ -12,6 +12,7 @@ module IBANTools
     def self.valid?(code)
       match = code.to_s.match(RE)
       return false unless match
+
       country_code = match.captures.first.upcase
       COUNTRY_CODES.include?(country_code)
     end
