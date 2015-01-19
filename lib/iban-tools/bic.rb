@@ -1,6 +1,5 @@
 module IBANTools
   class BIC
-
     RE = /\A
       [A-Z]{4}
       ([A-Z]{2})
@@ -16,6 +15,5 @@ module IBANTools
       country_code = match.captures.first.upcase
       COUNTRY_CODES.include?(country_code)
     end
-
   end
 end
