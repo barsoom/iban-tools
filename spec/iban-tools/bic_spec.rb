@@ -2,7 +2,6 @@ require 'iban-tools'
 
 module IBANTools
   describe BIC do
-
     it "accepts valid BIC codes" do
       # http://sv.wikipedia.org/wiki/ISO_9362
       # http://en.wikipedia.org/wiki/ISO_9362#Examples
@@ -27,6 +26,7 @@ module IBANTools
     # We had a bug
     it "rejects valid BIC embedded in a longer string" do
       BIC.valid?("before ESSESESS after").should eq false
+      BIC.valid?("beforeESSESESSafter").should eq false
     end
   end
 end
