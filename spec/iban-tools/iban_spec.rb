@@ -175,7 +175,7 @@ module IBANTools
       it 'fails on known pattern violations' do
         # This IBAN has valid check digits
         # but should fail because of pattern violation
-        IBAN.valid?('RO7999991B31007593840000').should eq false
+        expect(IBAN.valid?('RO7999991B31007593840000')).to eq false
       end
     end
   end
