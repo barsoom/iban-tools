@@ -4,86 +4,86 @@ require 'iban-tools'
 
 module IBANTools
   RSpec.describe IBAN do
-    describe 'with test rules' do
+    describe "with test rules" do
       before(:each) do
-        @rules = IBANRules.new({ 'GB' => { 'length' => 22, 'bban_pattern' => /[A-Z]{4}.*/ } })
+        @rules = IBANRules.new({ "GB" => { "length" => 22, "bban_pattern" => /[A-Z]{4}.*/ } })
       end
 
-      it 'validates IBAN code' do
+      it "validates IBAN code" do
         # Using example from http://en.wikipedia.org/wiki/IBAN#Calculating_and_validating_IBAN_checksums
-        expect(IBAN.valid?('GB82WEST12345698765432', @rules)).to eq true
+        expect(IBAN.valid?("GB82WEST12345698765432", @rules)).to eq true
       end
 
-      it 'rejects IBAN code with invalid characters' do
-        expect(IBAN.new('gb99 %BC').validation_errors(@rules))
+      it "rejects IBAN code with invalid characters" do
+        expect(IBAN.new("gb99 %BC").validation_errors(@rules))
           .to include(:bad_chars)
       end
 
-      it 'rejects IBAN code from unknown country' do
+      it "rejects IBAN code from unknown country" do
         # Norway is not present in @rules
-        expect(IBAN.new('NO9386011117947').validation_errors(@rules))
+        expect(IBAN.new("NO9386011117947").validation_errors(@rules))
           .to eq([:unknown_country_code])
       end
 
-      it 'rejects IBAN code that does not match the length for the respective country' do
-        expect(IBAN.new('GB88 WEST 1234 5698 7654 3').validation_errors(@rules))
+      it "rejects IBAN code that does not match the length for the respective country" do
+        expect(IBAN.new("GB88 WEST 1234 5698 7654 3").validation_errors(@rules))
           .to eq([:bad_length])
         # Length is 21, should be 22.
         # check digits are good though
       end
 
-      it 'rejects IBAN code that does not match the pattern for the selected country' do
-        expect(IBAN.new('GB69 7654 1234 5698 7654 32').validation_errors(@rules))
+      it "rejects IBAN code that does not match the pattern for the selected country" do
+        expect(IBAN.new("GB69 7654 1234 5698 7654 32").validation_errors(@rules))
           .to eq([:bad_format])
         # Length and check digits are good,
         # but country pattern calls for chars 4-7 to be letters.
       end
 
-      it 'rejects IBAN code with invalid check digits' do
-        expect(IBAN.valid?('GB99 WEST 1234 5698 7654 32', @rules)).to eq false
+      it "rejects IBAN code with invalid check digits" do
+        expect(IBAN.valid?("GB99 WEST 1234 5698 7654 32", @rules)).to eq false
 
-        expect(IBAN.new('GB99 WEST 1234 5698 7654 32').validation_errors(@rules))
+        expect(IBAN.new("GB99 WEST 1234 5698 7654 32").validation_errors(@rules))
           .to eq([:bad_check_digits])
       end
     end
 
-    it 'numerifies IBAN code' do
-      expect(IBAN.new('GB82 WEST 1234 5698 7654 32').numerify)
-        .to eq '3214282912345698765432161182'
+    it "numerifies IBAN code" do
+      expect(IBAN.new("GB82 WEST 1234 5698 7654 32").numerify)
+        .to eq "3214282912345698765432161182"
     end
 
-    it 'canonicalizes IBAN code' do
+    it "canonicalizes IBAN code" do
       expect(
-        IBAN.new('  gb82 WeSt 1234 5698 7654 32').code
+        IBAN.new("  gb82 WeSt 1234 5698 7654 32").code
       )
-        .to eq('GB82WEST12345698765432')
+        .to eq("GB82WEST12345698765432")
     end
 
-    it 'pretty-prints IBAN code' do
+    it "pretty-prints IBAN code" do
       expect(
-        IBAN.new(' GB82W EST12 34 5698 765432  ').prettify
-      ).to eq('GB82 WEST 1234 5698 7654 32')
+        IBAN.new(" GB82W EST12 34 5698 765432  ").prettify
+      ).to eq("GB82 WEST 1234 5698 7654 32")
 
       expect(
-        IBAN.new(' GB82W EST12 34 5698 765432  ').to_s
+        IBAN.new(" GB82W EST12 34 5698 765432  ").to_s
       )
-        .to eq('#<IBANTools::IBAN: GB82 WEST 1234 5698 7654 32>')
+        .to eq("#<IBANTools::IBAN: GB82 WEST 1234 5698 7654 32>")
     end
 
-    it 'extracts ISO country code' do
-      expect(IBAN.new('NO9386011117947').country_code).to eq 'NO'
+    it "extracts ISO country code" do
+      expect(IBAN.new("NO9386011117947").country_code).to eq "NO"
     end
 
-    it 'extracts check digits' do
-      expect(IBAN.new('NO6686011117947').check_digits).to eq '66'
+    it "extracts check digits" do
+      expect(IBAN.new("NO6686011117947").check_digits).to eq "66"
       # extract check digits even if they are invalid!
     end
 
-    it 'extracts BBAN (Basic Bank Account Number)' do
-      expect(IBAN.new('NO9386011117947').bban).to eq '86011117947'
+    it "extracts BBAN (Basic Bank Account Number)" do
+      expect(IBAN.new("NO9386011117947").bban).to eq "86011117947"
     end
 
-    describe 'with default rules' do # rubocop:disable Metrics/BlockLength
+    describe "with default rules" do # rubocop:disable Metrics/BlockLength
       %w[
         AZ21NABZ00000000137010001944
         BR7724891749412660603618210F3
@@ -98,7 +98,7 @@ module IBANTools
         XK051212012345678906
       ].each do |iban_code|
         describe iban_code do
-          it 'should be valid' do
+          it "should be valid" do
             pending "IBAN code #{iban_code} is not valid and was introduced in https://github.com/barsoom/iban-tools/commit/793dd95e934dc2cacc3744185cd2c57c9e3fbb4e"
             expect(IBAN.new(iban_code).validation_errors).to eq([])
           end
@@ -166,16 +166,16 @@ module IBANTools
          TR330006100519786457841326]
         .each do |iban_code|
         describe iban_code do
-          it 'should be valid' do
+          it "should be valid" do
             expect(IBAN.new(iban_code).validation_errors).to eq([])
           end
         end
       end
 
-      it 'fails on known pattern violations' do
+      it "fails on known pattern violations" do
         # This IBAN has valid check digits
         # but should fail because of pattern violation
-        expect(IBAN.valid?('RO7999991B31007593840000')).to eq false
+        expect(IBAN.valid?("RO7999991B31007593840000")).to eq false
       end
     end
   end
