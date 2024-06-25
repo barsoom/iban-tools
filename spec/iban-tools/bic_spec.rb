@@ -1,32 +1,32 @@
-require 'iban-tools'
+require "iban-tools"
 
 module IBANTools
   describe BIC do
     it "accepts valid BIC codes" do
       # http://sv.wikipedia.org/wiki/ISO_9362
       # http://en.wikipedia.org/wiki/ISO_9362#Examples
-      BIC.valid?("ESSESESS").should eq true
-      BIC.valid?("DABASESX").should eq true
-      BIC.valid?("UNCRIT2B912").should eq true
-      BIC.valid?("DSBACNBXSHA").should eq true
+      expect(BIC.valid?("ESSESESS")).to eq true
+      expect(BIC.valid?("DABASESX")).to eq true
+      expect(BIC.valid?("UNCRIT2B912")).to eq true
+      expect(BIC.valid?("DSBACNBXSHA")).to eq true
     end
 
     it "rejects BIC with invalid characters" do
-      BIC.valid?("ESS%SS").should eq false
+      expect(BIC.valid?("ESS%SS")).to eq false
     end
 
     it "rejects BIC with invalid length" do
-      BIC.valid?("ES").should eq false
+      expect(BIC.valid?("ES")).to eq false
     end
 
     it "rejects BIC with invalid country code" do
-      BIC.valid?("SWEDXXSS").should eq false
+      expect(BIC.valid?("SWEDXXSS")).to eq false
     end
 
     # We had a bug
     it "rejects valid BIC embedded in a longer string" do
-      BIC.valid?("before ESSESESS after").should eq false
-      BIC.valid?("beforeESSESESSafter").should eq false
+      expect(BIC.valid?("before ESSESESS after")).to eq false
+      expect(BIC.valid?("beforeESSESESSafter")).to eq false
     end
   end
 end
