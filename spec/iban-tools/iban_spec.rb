@@ -1,6 +1,6 @@
 # vim:ts=2:sw=2:et:
 
-require 'iban-tools'
+require 'spec_helper'
 
 module IBANTools
   RSpec.describe IBAN do
@@ -45,6 +45,14 @@ module IBANTools
         expect(IBAN.new("GB99 WEST 1234 5698 7654 32").validation_errors(@rules))
           .to eq([:bad_check_digits])
       end
+
+      it "should handle non-string ibans" do
+        IBAN.valid?( 12345698765432 ).should be_falsey
+      end
+
+      it "should reject IBAN which is nil" do
+        IBAN.valid?( nil ).should be_falsey
+      end
     end
 
     it "numerifies IBAN code" do
@@ -83,11 +91,11 @@ module IBANTools
       expect(IBAN.new("NO9386011117947").bban).to eq "86011117947"
     end
 
-    describe "with default rules" do # rubocop:disable Metrics/BlockLength
+    describe "with default rules" do
       %w[
         AZ21NABZ00000000137010001944
         BR7724891749412660603618210F3
-        CR0515202001026284066
+        CR05015202001026284066
         GT82TRAJ01020000001210029690
         MD24AG000225100013104168
         PK36SCBL0000001123456702
@@ -99,7 +107,6 @@ module IBANTools
       ].each do |iban_code|
         describe iban_code do
           it "should be valid" do
-            pending "IBAN code #{iban_code} is not valid and was introduced in https://github.com/barsoom/iban-tools/commit/793dd95e934dc2cacc3744185cd2c57c9e3fbb4e"
             expect(IBAN.new(iban_code).validation_errors).to eq([])
           end
         end

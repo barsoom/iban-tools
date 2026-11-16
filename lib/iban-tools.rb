@@ -22,6 +22,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'iban-tools/iban.rb'
-require 'iban-tools/iban_rules.rb'
-require 'iban-tools/bic.rb'
+require 'iban-tools/bic'
+require 'iban-tools/conversion'
+require 'iban-tools/iban'
+require 'iban-tools/iban_rules'
